@@ -31,3 +31,10 @@ LLM Prompt
         │
         ▼
 Final Answer + Reasoning
+
+
+
+Stage 1 → Keyword retrieval (BM25)
+Stage 2 → Dense retrieval (vector embeddings)
+Stage 3 → Neural reranker
+Stage 4 → LLM reasoning

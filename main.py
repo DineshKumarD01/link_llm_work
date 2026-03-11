@@ -1,6 +1,7 @@
 from extractor import extract_from_urls
 from preprocessing import preprocess_text
 from chunking import build_chunks
+from bm25_retriever import bm25_retrieve
 
 
 if __name__ == "__main__":
@@ -13,7 +14,11 @@ if __name__ == "__main__":
         "https://calibre-ebook.com/downloads/demos/demo.docx"
     ]
 
+    # STEP 1 — Extract documents
     results = extract_from_urls(urls)
+
+    # STEP 2 — Collect all chunks
+    all_chunks = []
 
     for r in results:
 
@@ -21,9 +26,23 @@ if __name__ == "__main__":
 
         chunks = build_chunks(clean_text)
 
-        print("\n====================")
-        print("URL:", r["url"])
-        print("Chunks:", len(chunks))
+        for chunk in chunks:
+            all_chunks.append(chunk)
 
-        if chunks:
-            print(chunks[0][:500])
+    print("\nTotal chunks:", len(all_chunks))
+
+    # STEP 3 — Query
+    query = "How do transformers improve machine translation?"
+
+    # STEP 4 — BM25 retrieval
+    candidates = bm25_retrieve(query, all_chunks)
+
+    print("\nBM25 returned:", len(candidates), "chunks")
+
+    # STEP 5 — Show top results
+    for i, c in enumerate(candidates[:5]):
+
+        print("\n====================")
+        print("Rank:", i+1)
+        print("Score:", c["score"])
+        print(c["chunk"][:500])
