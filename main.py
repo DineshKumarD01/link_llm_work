@@ -2,6 +2,7 @@ from extractor import extract_from_urls
 from preprocessing import preprocess_text
 from chunking import build_chunks
 from bm25_retriever import bm25_retrieve
+from semantic_reranker import semantic_retrieve_and_rerank
 
 
 if __name__ == "__main__":
@@ -39,10 +40,14 @@ if __name__ == "__main__":
 
     print("\nBM25 returned:", len(candidates), "chunks")
 
-    # STEP 5 — Show top results
-    for i, c in enumerate(candidates[:5]):
+    # STEP 5 — Semantic retrieval + reranking
+    final_chunks = semantic_retrieve_and_rerank(query, candidates)
+
+    print("\nFINAL CHUNKS FOR LLM")
+
+    for i, c in enumerate(final_chunks):
 
         print("\n====================")
         print("Rank:", i+1)
-        print("Score:", c["score"])
+        print("Rerank Score:", c["rerank_score"])
         print(c["chunk"][:500])
