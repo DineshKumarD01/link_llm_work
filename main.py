@@ -3,6 +3,7 @@ from preprocessing import preprocess_text
 from chunking import build_chunks
 from bm25_retriever import bm25_retrieve
 from semantic_reranker import semantic_retrieve_and_rerank
+from llm_inference import generate_answer
 
 
 if __name__ == "__main__":
@@ -45,9 +46,20 @@ if __name__ == "__main__":
 
     print("\nFINAL CHUNKS FOR LLM")
 
+    retrieved_texts = []
+
     for i, c in enumerate(final_chunks):
 
         print("\n====================")
         print("Rank:", i+1)
         print("Rerank Score:", c["rerank_score"])
         print(c["chunk"][:500])
+
+        retrieved_texts.append(c["chunk"])
+
+    # STEP 6 — LLM Answer Generation
+    answer = generate_answer(query, retrieved_texts)
+
+    print("\n====================")
+    print("FINAL ANSWER FROM LLM")
+    print(answer)
